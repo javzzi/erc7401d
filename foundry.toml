@@ -4,4 +4,13 @@ out = "out"
 libs = ["lib"]
 solc = "0.8.26"
 
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+[fuzz]
+runs = 5000
+max_test_rejects = 150000
+
+[invariant]
+runs = 256
+depth = 15
+fail_on_revert = false
+call_override = false
+show_metrics = true
