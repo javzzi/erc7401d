@@ -63,9 +63,7 @@ contract TransferTest is ERC7401DTestBase {
         erc7401dParent.transferFrom(owner, other, 999);
     }
 
-    function test_RevertWhen_TransferringATokenFromAnAddressThatIsNotTheOwnerOrApproved()
-        public
-    {
+    function test_RevertWhen_TransferringATokenFromAnAddressThatIsNotTheOwnerOrApproved() public {
         vm.prank(other);
         vm.expectRevert(ERC7401NotApprovedOrDirectOwner.selector);
         erc7401dParent.transferFrom(owner, other, tokenId);
@@ -81,11 +79,7 @@ contract TransferTest is ERC7401DTestBase {
         ERC721ReceiverRevertMock revertingReceiver = new ERC721ReceiverRevertMock();
         vm.prank(owner);
         vm.expectRevert(bytes("RevertMock"));
-        erc7401dParent.safeTransferFrom(
-            owner,
-            address(revertingReceiver),
-            tokenId
-        );
+        erc7401dParent.safeTransferFrom(owner, address(revertingReceiver), tokenId);
     }
 
     function test_ShouldSafeTransferATokenFromApprovedAddress() public {
@@ -100,9 +94,7 @@ contract TransferTest is ERC7401DTestBase {
         assertEq(erc7401dParent.ownerOf(tokenId), other);
     }
 
-    function test_ShouldEmitTransferAndNestTransferEventsOnSafeTransfer()
-        public
-    {
+    function test_ShouldEmitTransferAndNestTransferEventsOnSafeTransfer() public {
         vm.prank(owner);
         vm.expectEmit(true, true, true, true);
         emit IERC721.Transfer(owner, other, tokenId);
@@ -136,9 +128,7 @@ contract TransferTest is ERC7401DTestBase {
         erc7401dParent.safeTransferFrom(owner, other, 999);
     }
 
-    function test_RevertWhen_SafeTransferringATokenFromAnAddressThatIsNotTheOwnerOrApproved()
-        public
-    {
+    function test_RevertWhen_SafeTransferringATokenFromAnAddressThatIsNotTheOwnerOrApproved() public {
         vm.prank(other);
         vm.expectRevert(ERC7401NotApprovedOrDirectOwner.selector);
         erc7401dParent.safeTransferFrom(owner, other, tokenId);
@@ -163,11 +153,7 @@ contract TransferFuzzTest is ERC7401DTestBase {
         super.setUp();
     }
 
-    function testFuzz_Transfer(
-        address from,
-        address to,
-        uint256 tokenIdSeed
-    ) public {
+    function testFuzz_Transfer(address from, address to, uint256 tokenIdSeed) public {
         vm.assume(from != address(0) && to != address(0));
         vm.assume(from != to);
         vm.assume(from.code.length == 0 && to.code.length == 0);
@@ -186,18 +172,12 @@ contract TransferFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.balanceOf(from), fromBalanceBefore - 1);
         assertEq(erc7401dParent.balanceOf(to), toBalanceBefore + 1);
 
-        (address directOwner, uint256 parentTokenIdOut, ) = erc7401dParent
-            .directOwnerOf(testTokenId);
+        (address directOwner, uint256 parentTokenIdOut,) = erc7401dParent.directOwnerOf(testTokenId);
         assertEq(directOwner, to);
         assertEq(parentTokenIdOut, 0);
     }
 
-    function testFuzz_SafeTransfer(
-        address from,
-        address to,
-        uint256 tokenIdSeed,
-        bytes memory data
-    ) public {
+    function testFuzz_SafeTransfer(address from, address to, uint256 tokenIdSeed, bytes memory data) public {
         vm.assume(from != address(0) && to != address(0));
         vm.assume(from != to);
         vm.assume(from.code.length == 0 && to.code.length == 0);
@@ -212,21 +192,10 @@ contract TransferFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.ownerOf(testTokenId), to);
     }
 
-    function testFuzz_TransferWithApproval(
-        address owner_,
-        address operator_,
-        address to,
-        uint256 tokenIdSeed
-    ) public {
-        vm.assume(
-            owner_ != address(0) && operator_ != address(0) && to != address(0)
-        );
+    function testFuzz_TransferWithApproval(address owner_, address operator_, address to, uint256 tokenIdSeed) public {
+        vm.assume(owner_ != address(0) && operator_ != address(0) && to != address(0));
         vm.assume(owner_ != operator_ && operator_ != to && owner_ != to);
-        vm.assume(
-            owner_.code.length == 0 &&
-                operator_.code.length == 0 &&
-                to.code.length == 0
-        );
+        vm.assume(owner_.code.length == 0 && operator_.code.length == 0 && to.code.length == 0);
         uint256 testTokenId = bound(tokenIdSeed, 1000, type(uint128).max);
         vm.assume(!erc7401dParent.exists(testTokenId));
 
@@ -247,21 +216,12 @@ contract TransferFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.getApproved(testTokenId), address(0));
     }
 
-    function testFuzz_TransferWithApprovalForAll(
-        address owner_,
-        address operator_,
-        address to,
-        uint256 tokenIdSeed
-    ) public {
-        vm.assume(
-            owner_ != address(0) && operator_ != address(0) && to != address(0)
-        );
+    function testFuzz_TransferWithApprovalForAll(address owner_, address operator_, address to, uint256 tokenIdSeed)
+        public
+    {
+        vm.assume(owner_ != address(0) && operator_ != address(0) && to != address(0));
         vm.assume(owner_ != operator_ && operator_ != to && owner_ != to);
-        vm.assume(
-            owner_.code.length == 0 &&
-                operator_.code.length == 0 &&
-                to.code.length == 0
-        );
+        vm.assume(owner_.code.length == 0 && operator_.code.length == 0 && to.code.length == 0);
         uint256 testTokenId = bound(tokenIdSeed, 1000, type(uint128).max);
         vm.assume(!erc7401dParent.exists(testTokenId));
 

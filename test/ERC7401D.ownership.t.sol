@@ -10,12 +10,7 @@ contract OwnershipTest is ERC7401DTestBase {
         erc7401dChild1.addParentAddress(address(erc7401dParent));
         erc7401dParent.safeMint(owner, parentTokenId, "");
         vm.prank(owner);
-        erc7401dChild1.nestMint(
-            address(erc7401dParent),
-            childTokenId,
-            parentTokenId,
-            ""
-        );
+        erc7401dChild1.nestMint(address(erc7401dParent), childTokenId, parentTokenId, "");
     }
 
     function test_ShouldReturnTheOwnerOfAToken() public view {
@@ -23,8 +18,7 @@ contract OwnershipTest is ERC7401DTestBase {
     }
 
     function test_ShouldReturnTheDirectOwnerOfAToken() public view {
-        (address directOwner, uint256 tokenId, bool isNFT) = erc7401dChild1
-            .directOwnerOf(childTokenId);
+        (address directOwner, uint256 tokenId, bool isNFT) = erc7401dChild1.directOwnerOf(childTokenId);
         assertEq(directOwner, address(erc7401dParent));
         assertEq(tokenId, parentTokenId);
         assertTrue(isNFT);

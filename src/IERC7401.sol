@@ -37,11 +37,7 @@ interface IERC7401 is IERC165 {
      * @param tokenId ID of the token being transferred
      */
     event NestTransfer(
-        address indexed from,
-        address indexed to,
-        uint256 fromTokenId,
-        uint256 toTokenId,
-        uint256 indexed tokenId
+        address indexed from, address indexed to, uint256 fromTokenId, uint256 toTokenId, uint256 indexed tokenId
     );
 
     /**
@@ -53,10 +49,7 @@ interface IERC7401 is IERC165 {
      * @param childId ID of the child token in the child token's collection smart contract
      */
     event ChildProposed(
-        uint256 indexed tokenId,
-        uint256 childIndex,
-        address indexed childAddress,
-        uint256 indexed childId
+        uint256 indexed tokenId, uint256 childIndex, address indexed childAddress, uint256 indexed childId
     );
 
     /**
@@ -68,10 +61,7 @@ interface IERC7401 is IERC165 {
      * @param childId ID of the child token in the child token's collection smart contract
      */
     event ChildAccepted(
-        uint256 indexed tokenId,
-        uint256 childIndex,
-        address indexed childAddress,
-        uint256 indexed childId
+        uint256 indexed tokenId, uint256 childIndex, address indexed childAddress, uint256 indexed childId
     );
 
     /**
@@ -129,9 +119,7 @@ interface IERC7401 is IERC165 {
      * @return parentId The ID of the parent token. Should be `0` if the owner is an externally owned account
      * @return isNFT The boolean value signifying whether the owner is an NFT or not
      */
-    function directOwnerOf(
-        uint256 tokenId
-    ) external view returns (address owner, uint256 parentId, bool isNFT);
+    function directOwnerOf(uint256 tokenId) external view returns (address owner, uint256 parentId, bool isNFT);
 
     /**
      * @notice Used to burn a given token.
@@ -149,10 +137,7 @@ interface IERC7401 is IERC165 {
      * @param maxRecursiveBurns Maximum number of tokens to recursively burn
      * @return burnedChildren Number of recursively burned children
      */
-    function burn(
-        uint256 tokenId,
-        uint256 maxRecursiveBurns
-    ) external returns (uint256 burnedChildren);
+    function burn(uint256 tokenId, uint256 maxRecursiveBurns) external returns (uint256 burnedChildren);
 
     /**
      * @notice Used to add a child token to a given parent token.
@@ -165,11 +150,7 @@ interface IERC7401 is IERC165 {
      * @param childId ID of the new proposed child token
      * @param data Additional data with no specified format
      */
-    function addChild(
-        uint256 parentId,
-        uint256 childId,
-        bytes memory data
-    ) external;
+    function addChild(uint256 parentId, uint256 childId, bytes memory data) external;
 
     /**
      * @notice Used to accept a pending child token for a given parent token.
@@ -182,12 +163,7 @@ interface IERC7401 is IERC165 {
      * @param childId ID of the child token expected to be located at the specified index of the given parent token's
      *  pending children array
      */
-    function acceptChild(
-        uint256 parentId,
-        uint256 childIndex,
-        address childAddress,
-        uint256 childId
-    ) external;
+    function acceptChild(uint256 parentId, uint256 childIndex, address childAddress, uint256 childId) external;
 
     /**
      * @notice Used to reject all pending children of a given parent token.
@@ -203,10 +179,7 @@ interface IERC7401 is IERC165 {
      * @param maxRejections Maximum number of expected children to reject, used to prevent from rejecting children which
      *  arrive just before this operation.
      */
-    function rejectAllChildren(
-        uint256 parentId,
-        uint256 maxRejections
-    ) external;
+    function rejectAllChildren(uint256 parentId, uint256 maxRejections) external;
 
     /**
      * @notice Used to transfer a child token from a given parent token.
@@ -245,9 +218,7 @@ interface IERC7401 is IERC165 {
      * @param parentId ID of the parent token for which to retrieve the active child tokens
      * @return children An array of Child structs containing the parent token's active child tokens
      */
-    function childrenOf(
-        uint256 parentId
-    ) external view returns (Child[] memory children);
+    function childrenOf(uint256 parentId) external view returns (Child[] memory children);
 
     /**
      * @notice Used to retrieve the pending child tokens of a given parent token.
@@ -260,9 +231,7 @@ interface IERC7401 is IERC165 {
      * @param parentId ID of the parent token for which to retrieve the pending child tokens
      * @return children An array of Child structs containing the parent token's pending child tokens
      */
-    function pendingChildrenOf(
-        uint256 parentId
-    ) external view returns (Child[] memory children);
+    function pendingChildrenOf(uint256 parentId) external view returns (Child[] memory children);
 
     /**
      * @notice Used to retrieve a specific active child token for a given parent token.
@@ -276,10 +245,7 @@ interface IERC7401 is IERC165 {
      * @param index Index of the child token in the parent token's active child tokens array
      * @return child A Child struct containing data about the specified child
      */
-    function childOf(
-        uint256 parentId,
-        uint256 index
-    ) external view returns (Child memory child);
+    function childOf(uint256 parentId, uint256 index) external view returns (Child memory child);
 
     /**
      * @notice Used to retrieve a specific pending child token from a given parent token.
@@ -293,10 +259,7 @@ interface IERC7401 is IERC165 {
      * @param index Index of the child token in the parent token's pending child tokens array
      * @return child A Child struct containting data about the specified child
      */
-    function pendingChildOf(
-        uint256 parentId,
-        uint256 index
-    ) external view returns (Child memory child);
+    function pendingChildOf(uint256 parentId, uint256 index) external view returns (Child memory child);
 
     /**
      * @notice Used to transfer the token into another token.
@@ -306,11 +269,6 @@ interface IERC7401 is IERC165 {
      * @param destinationId ID of the token to receive the token being transferred
      * @param data Additional data with no specified format, sent in the addChild call
      */
-    function nestTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) external;
+    function nestTransferFrom(address from, address to, uint256 tokenId, uint256 destinationId, bytes memory data)
+        external;
 }

@@ -16,9 +16,7 @@ contract ApprovalTest is ERC7401DTestBase {
         assertEq(erc7401dParent.getApproved(tokenId), approved);
     }
 
-    function test_ShouldOverrideTokenApprovalForThatTokenIdAndOwnerIfItWasAlreadySet()
-        public
-    {
+    function test_ShouldOverrideTokenApprovalForThatTokenIdAndOwnerIfItWasAlreadySet() public {
         vm.prank(owner);
         erc7401dParent.approve(approved, tokenId);
         assertEq(erc7401dParent.getApproved(tokenId), approved);
@@ -51,21 +49,15 @@ contract ApprovalTest is ERC7401DTestBase {
 
     function test_RevertWhen_ANonOwnerOrOperatorTriesToApproveAToken() public {
         vm.prank(other);
-        vm.expectRevert(
-            ERC721ApproveCallerIsNotOwnerNorApprovedForAll.selector
-        );
+        vm.expectRevert(ERC721ApproveCallerIsNotOwnerNorApprovedForAll.selector);
         erc7401dParent.approve(approved, tokenId);
     }
 
-    function test_RevertWhen_AnApprovedAddressTriesToChangeTheApprovalOfAToken()
-        public
-    {
+    function test_RevertWhen_AnApprovedAddressTriesToChangeTheApprovalOfAToken() public {
         vm.prank(owner);
         erc7401dParent.approve(approved, tokenId);
         vm.prank(approved);
-        vm.expectRevert(
-            ERC721ApproveCallerIsNotOwnerNorApprovedForAll.selector
-        );
+        vm.expectRevert(ERC721ApproveCallerIsNotOwnerNorApprovedForAll.selector);
         erc7401dParent.approve(other, tokenId);
     }
 
@@ -75,9 +67,7 @@ contract ApprovalTest is ERC7401DTestBase {
         erc7401dParent.approve(owner, tokenId);
     }
 
-    function test_ShouldSetOperatorApprovalForTheOperatorAddressFromTheMsgSender()
-        public
-    {
+    function test_ShouldSetOperatorApprovalForTheOperatorAddressFromTheMsgSender() public {
         vm.prank(owner);
         erc7401dParent.setApprovalForAll(operator, true);
         assertTrue(erc7401dParent.isApprovedForAll(owner, operator));
@@ -93,9 +83,7 @@ contract ApprovalTest is ERC7401DTestBase {
         assertFalse(erc7401dParent.isApprovedForAll(owner, operator));
     }
 
-    function test_ShouldEmitApprovalForAllEventOnSettingOperatorApproval()
-        public
-    {
+    function test_ShouldEmitApprovalForAllEventOnSettingOperatorApproval() public {
         vm.prank(owner);
         vm.expectEmit(true, true, true, true);
         emit IERC721.ApprovalForAll(owner, operator, true);
@@ -114,10 +102,7 @@ contract ApprovalFuzzTest is ERC7401DTestBase {
         super.setUp();
     }
 
-    function testFuzz_Approve(
-        address operatorAddr,
-        uint256 tokenIdSeed
-    ) public {
+    function testFuzz_Approve(address operatorAddr, uint256 tokenIdSeed) public {
         vm.assume(operatorAddr != address(0));
         vm.assume(operatorAddr != owner);
         uint256 testTokenId = bound(tokenIdSeed, 1, type(uint128).max);
@@ -134,17 +119,13 @@ contract ApprovalFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.ownerOf(testTokenId), other);
     }
 
-    function testFuzz_ApprovalClearedOnTransfer(
-        address initialOperator,
-        address newOwner,
-        uint256 tokenIdSeed
-    ) public {
+    function testFuzz_ApprovalClearedOnTransfer(address initialOperator, address newOwner, uint256 tokenIdSeed)
+        public
+    {
         vm.assume(initialOperator != address(0) && newOwner != address(0));
         vm.assume(initialOperator != owner && newOwner != owner);
         vm.assume(initialOperator != newOwner);
-        vm.assume(
-            initialOperator.code.length == 0 && newOwner.code.length == 0
-        );
+        vm.assume(initialOperator.code.length == 0 && newOwner.code.length == 0);
         uint256 testTokenId = bound(tokenIdSeed, 1, type(uint128).max);
 
         erc7401dParent.safeMint(owner, testTokenId, "");
@@ -160,15 +141,9 @@ contract ApprovalFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.getApproved(testTokenId), address(0));
     }
 
-    function testFuzz_MultipleApprovals(
-        address operator1,
-        address operator2,
-        uint256 tokenIdSeed
-    ) public {
+    function testFuzz_MultipleApprovals(address operator1, address operator2, uint256 tokenIdSeed) public {
         vm.assume(operator1 != address(0) && operator2 != address(0));
-        vm.assume(
-            operator1 != operator2 && operator1 != owner && operator2 != owner
-        );
+        vm.assume(operator1 != operator2 && operator1 != owner && operator2 != owner);
         uint256 testTokenId = bound(tokenIdSeed, 1, type(uint128).max);
 
         vm.assume(!erc7401dParent.exists(testTokenId));
@@ -192,9 +167,7 @@ contract ApprovalFuzzTest is ERC7401DTestBase {
         assertEq(erc7401dParent.ownerOf(testTokenId), other);
     }
 
-    function testFuzz_RevertWhen_ApproveNonexistentToken(
-        uint256 tokenIdSeed
-    ) public {
+    function testFuzz_RevertWhen_ApproveNonexistentToken(uint256 tokenIdSeed) public {
         uint256 testTokenId = bound(tokenIdSeed, 1, type(uint128).max);
         vm.assume(!erc7401dParent.exists(testTokenId));
 

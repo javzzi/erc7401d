@@ -44,9 +44,7 @@ interface IERC7401D is IERC7401 {
      * @param parentAddress Address to check
      * @return bool indicating whether the address is a valid parent address
      */
-    function isParentAddress(
-        address parentAddress
-    ) external view returns (bool);
+    function isParentAddress(address parentAddress) external view returns (bool);
 
     /**
      * @notice Used to retrieve all child addresses.
@@ -66,10 +64,7 @@ interface IERC7401D is IERC7401 {
      * @param childAddress Address of the child token's collection smart contract
      * @return tokenIds An array of token IDs representing the child tokens for the given parent and child address
      */
-    function childrenOf(
-        uint256 parentId,
-        address childAddress
-    ) external view returns (uint256[] memory tokenIds);
+    function childrenOf(uint256 parentId, address childAddress) external view returns (uint256[] memory tokenIds);
 
     /**
      * @notice Used to retrieve a specific child token from a given parent token for a specific child address.
@@ -78,9 +73,5 @@ interface IERC7401D is IERC7401 {
      * @param index Index of the child token in the parent token's active child tokens array for the given child address
      * @return tokenId The ID of the child token
      */
-    function childOf(
-        uint256 parentId,
-        address childAddress,
-        uint256 index
-    ) external view returns (uint256 tokenId);
+    function childOf(uint256 parentId, address childAddress, uint256 index) external view returns (uint256 tokenId);
 }

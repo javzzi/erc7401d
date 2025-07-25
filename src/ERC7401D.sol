@@ -16,14 +16,7 @@ import {IERC7401DErrors} from "./IERC7401DErrors.sol";
 /// @notice ERC7401D implementation
 /// @author Javzzi with Doodles
 /// @author Modified from RMRKNestable by RMRK team (https://github.com/rmrk-team/evm/blob/master/contracts/RMRK/nestable/RMRKNestable.sol)
-abstract contract ERC7401D is
-    Context,
-    IERC165,
-    IERC721,
-    IERC721Metadata,
-    IERC7401D,
-    IERC7401DErrors
-{
+abstract contract ERC7401D is Context, IERC165, IERC721, IERC721Metadata, IERC7401D, IERC7401DErrors {
     using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -65,8 +58,9 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to check
      */
     function _onlyApprovedOrOwner(uint256 tokenId) internal view {
-        if (!_isApprovedOrOwner(_msgSender(), tokenId))
+        if (!_isApprovedOrOwner(_msgSender(), tokenId)) {
             revert ERC721NotApprovedOrOwner();
+        }
     }
 
     /**
@@ -87,8 +81,9 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to check.
      */
     function _onlyApprovedOrDirectOwner(uint256 tokenId) internal view {
-        if (!_isApprovedOrDirectOwner(_msgSender(), tokenId))
+        if (!_isApprovedOrDirectOwner(_msgSender(), tokenId)) {
             revert ERC7401NotApprovedOrDirectOwner();
+        }
     }
 
     /**
@@ -104,14 +99,9 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC165
      */
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(IERC165) returns (bool) {
-        return
-            interfaceId == type(IERC165).interfaceId ||
-            interfaceId == type(IERC721).interfaceId ||
-            interfaceId == type(IERC7401).interfaceId ||
-            interfaceId == type(IERC7401D).interfaceId;
+    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165) returns (bool) {
+        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC721).interfaceId
+            || interfaceId == type(IERC7401).interfaceId || interfaceId == type(IERC7401D).interfaceId;
     }
 
     /**
@@ -141,11 +131,11 @@ abstract contract ERC7401D is
      * @param to Address to which to transfer the token to
      * @param tokenId ID of the token to transfer
      */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public virtual onlyApprovedOrDirectOwner(tokenId) {
+    function transferFrom(address from, address to, uint256 tokenId)
+        public
+        virtual
+        onlyApprovedOrDirectOwner(tokenId)
+    {
         _transfer(from, to, tokenId, "");
     }
 
@@ -163,11 +153,7 @@ abstract contract ERC7401D is
      * @param to Address to transfer the tokens to
      * @param tokenId ID of the token to transfer
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual {
         safeTransferFrom(from, to, tokenId, "");
     }
 
@@ -186,25 +172,22 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to transfer
      * @param data Additional data without a specified format to be sent along with the token transaction
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public virtual onlyApprovedOrDirectOwner(tokenId) {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
+        public
+        virtual
+        onlyApprovedOrDirectOwner(tokenId)
+    {
         _safeTransfer(from, to, tokenId, data);
     }
 
     /**
      * @inheritdoc IERC7401
      */
-    function nestTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) public virtual onlyApprovedOrDirectOwner(tokenId) {
+    function nestTransferFrom(address from, address to, uint256 tokenId, uint256 destinationId, bytes memory data)
+        public
+        virtual
+        onlyApprovedOrDirectOwner(tokenId)
+    {
         _nestTransfer(from, to, tokenId, destinationId, data);
     }
 
@@ -226,15 +209,11 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to transfer
      * @param data Additional data with no specified format, sent in call to `to`
      */
-    function _safeTransfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
         _transfer(from, to, tokenId, data);
-        if (!_checkOnERC721Received(from, to, tokenId, data))
+        if (!_checkOnERC721Received(from, to, tokenId, data)) {
             revert ERC721TransferToNonReceiverImplementer();
+        }
     }
 
     /**
@@ -250,13 +229,8 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to transfer
      * @param data Additional data with no specified format, sent in call to `to`
      */
-    function _transfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
-        (address immediateOwner, uint256 parentId, ) = directOwnerOf(tokenId);
+    function _transfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
+        (address immediateOwner, uint256 parentId,) = directOwnerOf(tokenId);
         if (immediateOwner != from) revert ERC721TransferFromIncorrectOwner();
         if (to == address(0)) revert ERC721TransferToTheZeroAddress();
 
@@ -284,29 +258,20 @@ abstract contract ERC7401D is
      * @param destinationId ID of the token receiving the given token
      * @param data Additional data with no specified format, sent in the addChild call
      */
-    function _nestTransfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) internal virtual {
-        (address immediateOwner, uint256 parentId, ) = directOwnerOf(tokenId);
+    function _nestTransfer(address from, address to, uint256 tokenId, uint256 destinationId, bytes memory data)
+        internal
+        virtual
+    {
+        (address immediateOwner, uint256 parentId,) = directOwnerOf(tokenId);
         if (immediateOwner != from) revert ERC721TransferFromIncorrectOwner();
-        if (to == address(this) && tokenId == destinationId)
+        if (to == address(this) && tokenId == destinationId) {
             revert ERC7401NestableTransferToSelf();
+        }
         _checkDestination(to);
         _checkForInheritanceLoop(tokenId, to, destinationId);
 
         _beforeTokenTransfer(from, to, tokenId);
-        _beforeNestedTokenTransfer(
-            immediateOwner,
-            to,
-            parentId,
-            destinationId,
-            tokenId,
-            data
-        );
+        _beforeNestedTokenTransfer(immediateOwner, to, parentId, destinationId, tokenId, data);
 
         _balances[from] -= 1;
         _updateOwnerAndClearApprovals(tokenId, destinationId, to);
@@ -343,14 +308,7 @@ abstract contract ERC7401D is
         emit NestTransfer(from, to, parentId, destinationId, tokenId);
 
         _afterTokenTransfer(from, to, tokenId);
-        _afterNestedTokenTransfer(
-            from,
-            to,
-            parentId,
-            destinationId,
-            tokenId,
-            data
-        );
+        _afterNestedTokenTransfer(from, to, parentId, destinationId, tokenId, data);
     }
 
     /**
@@ -362,17 +320,9 @@ abstract contract ERC7401D is
      *  nested
      * @param targetId ID of the token into which the given token would be nested
      */
-    function _checkForInheritanceLoop(
-        uint256 currentId,
-        address targetContract,
-        uint256 targetId
-    ) private view {
+    function _checkForInheritanceLoop(uint256 currentId, address targetContract, uint256 targetId) private view {
         for (uint256 i; i < _MAX_LEVELS_TO_CHECK_FOR_INHERITANCE_LOOP; i++) {
-            (
-                address nextOwner,
-                uint256 nextOwnerTokenId,
-                bool isNft
-            ) = IERC7401(targetContract).directOwnerOf(targetId);
+            (address nextOwner, uint256 nextOwnerTokenId, bool isNft) = IERC7401(targetContract).directOwnerOf(targetId);
             // If there's a final address, we're good. There's no loop.
             if (!isNft) {
                 return;
@@ -399,14 +349,11 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to mint
      * @param data Additional data to send with the tokens
      */
-    function _safeMint(
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 tokenId, bytes memory data) internal virtual {
         _mint(to, tokenId, data);
-        if (!_checkOnERC721Received(address(0), to, tokenId, data))
+        if (!_checkOnERC721Received(address(0), to, tokenId, data)) {
             revert ERC721TransferToNonReceiverImplementer();
+        }
     }
 
     /**
@@ -422,11 +369,7 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to mint
      * @param data Additional data with no specified format, sent in call to `to`
      */
-    function _mint(
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _mint(address to, uint256 tokenId, bytes memory data) internal virtual {
         _innerMint(to, tokenId, 0, data);
 
         emit Transfer(address(0), to, tokenId);
@@ -443,12 +386,7 @@ abstract contract ERC7401D is
      * @param destinationId ID of the token into which to mint the new child token
      * @param data Additional data with no specified format, sent in the addChild call
      */
-    function _nestMint(
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) internal virtual {
+    function _nestMint(address to, uint256 tokenId, uint256 destinationId, bytes memory data) internal virtual {
         _checkDestination(to);
         _innerMint(to, tokenId, destinationId, data);
         _sendToNFT(address(0), to, 0, destinationId, tokenId, data);
@@ -466,31 +404,16 @@ abstract contract ERC7401D is
      * @param destinationId ID of the token into which to mint the new token
      * @param data Additional data with no specified format, sent in call to `to`
      */
-    function _innerMint(
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) private {
+    function _innerMint(address to, uint256 tokenId, uint256 destinationId, bytes memory data) private {
         if (to == address(0)) revert ERC721MintToTheZeroAddress();
         if (_exists(tokenId)) revert ERC721TokenAlreadyMinted();
         if (tokenId == uint256(0)) revert ERC7401IdZeroForbidden();
 
         _beforeTokenTransfer(address(0), to, tokenId);
-        _beforeNestedTokenTransfer(
-            address(0),
-            to,
-            0,
-            destinationId,
-            tokenId,
-            data
-        );
+        _beforeNestedTokenTransfer(address(0), to, 0, destinationId, tokenId, data);
 
         _balances[to] += 1;
-        _directOwners[tokenId] = DirectOwner({
-            ownerAddress: to,
-            tokenId: destinationId
-        });
+        _directOwners[tokenId] = DirectOwner({ownerAddress: to, tokenId: destinationId});
     }
 
     ////////////////////////////////////////
@@ -500,12 +423,8 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function ownerOf(
-        uint256 tokenId
-    ) public view virtual override(IERC7401, IERC721) returns (address) {
-        (address owner, uint256 ownerTokenId, bool isNft) = directOwnerOf(
-            tokenId
-        );
+    function ownerOf(uint256 tokenId) public view virtual override(IERC7401, IERC721) returns (address) {
+        (address owner, uint256 ownerTokenId, bool isNft) = directOwnerOf(tokenId);
         if (isNft) {
             owner = IERC7401(owner).ownerOf(ownerTokenId);
         }
@@ -515,9 +434,7 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function directOwnerOf(
-        uint256 tokenId
-    )
+    function directOwnerOf(uint256 tokenId)
         public
         view
         virtual
@@ -547,10 +464,12 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function burn(
-        uint256 tokenId,
-        uint256 maxChildrenBurns
-    ) public virtual onlyApprovedOrDirectOwner(tokenId) returns (uint256) {
+    function burn(uint256 tokenId, uint256 maxChildrenBurns)
+        public
+        virtual
+        onlyApprovedOrDirectOwner(tokenId)
+        returns (uint256)
+    {
         return _burn(tokenId, maxChildrenBurns);
     }
 
@@ -567,22 +486,12 @@ abstract contract ERC7401D is
      * @param maxChildrenBurns Maximum children to recursively burn
      * @return The number of recursive burns it took to burn all of the children
      */
-    function _burn(
-        uint256 tokenId,
-        uint256 maxChildrenBurns
-    ) internal virtual returns (uint256) {
-        (address immediateOwner, uint256 parentId, ) = directOwnerOf(tokenId);
+    function _burn(uint256 tokenId, uint256 maxChildrenBurns) internal virtual returns (uint256) {
+        (address immediateOwner, uint256 parentId,) = directOwnerOf(tokenId);
         address rootOwner = ownerOf(tokenId);
 
         _beforeTokenTransfer(immediateOwner, address(0), tokenId);
-        _beforeNestedTokenTransfer(
-            immediateOwner,
-            address(0),
-            parentId,
-            0,
-            tokenId,
-            ""
-        );
+        _beforeNestedTokenTransfer(immediateOwner, address(0), parentId, 0, tokenId, "");
 
         _balances[immediateOwner] -= 1;
         _approve(address(0), tokenId);
@@ -598,14 +507,7 @@ abstract contract ERC7401D is
         emit NestTransfer(immediateOwner, address(0), parentId, 0, tokenId);
 
         _afterTokenTransfer(immediateOwner, address(0), tokenId);
-        _afterNestedTokenTransfer(
-            immediateOwner,
-            address(0),
-            parentId,
-            0,
-            tokenId,
-            ""
-        );
+        _afterNestedTokenTransfer(immediateOwner, address(0), parentId, 0, tokenId, "");
 
         return totalChildBurns;
     }
@@ -621,10 +523,7 @@ abstract contract ERC7401D is
      * @param maxChildrenBurns Maximum number of children to recursively burn
      * @return totalChildBurns The total number of children burned
      */
-    function _burnChildren(
-        uint256 tokenId,
-        uint256 maxChildrenBurns
-    ) internal virtual returns (uint256) {
+    function _burnChildren(uint256 tokenId, uint256 maxChildrenBurns) internal virtual returns (uint256) {
         uint256 totalChildBurns;
 
         address[] memory localChildAddresses = _childAddresses.values();
@@ -641,10 +540,7 @@ abstract contract ERC7401D is
                 uint256 childId = children[j];
 
                 if (totalChildBurns >= maxChildrenBurns) {
-                    revert ERC7401MaxRecursiveBurnsReached(
-                        childAddress,
-                        childId
-                    );
+                    revert ERC7401MaxRecursiveBurnsReached(childAddress, childId);
                 }
                 delete _children[tokenId][childAddress];
                 unchecked {
@@ -653,12 +549,7 @@ abstract contract ERC7401D is
                 }
                 // We substract one to the next level to count for the token being burned, then add it again on returns
                 // This is to allow the behavior of 0 recursive burns meaning only the current token is deleted.
-                totalChildBurns +=
-                    IERC7401(childAddress).burn(
-                        childId,
-                        pendingRecursiveBurns - 1
-                    ) +
-                    1;
+                totalChildBurns += IERC7401(childAddress).burn(childId, pendingRecursiveBurns - 1) + 1;
             }
         }
 
@@ -686,8 +577,9 @@ abstract contract ERC7401D is
         address owner = ownerOf(tokenId);
         if (to == owner) revert ERC721ApprovalToCurrentOwner();
 
-        if (_msgSender() != owner && !isApprovedForAll(owner, _msgSender()))
+        if (_msgSender() != owner && !isApprovedForAll(owner, _msgSender())) {
             revert ERC721ApproveCallerIsNotOwnerNorApprovedForAll();
+        }
 
         _approve(to, tokenId);
     }
@@ -700,9 +592,7 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token to check for approval
      * @return Address of the account approved to manage the token
      */
-    function getApproved(
-        uint256 tokenId
-    ) public view virtual returns (address) {
+    function getApproved(uint256 tokenId) public view virtual returns (address) {
         _requireMinted(tokenId);
 
         return _tokenApprovals[tokenId][ownerOf(tokenId)];
@@ -731,10 +621,7 @@ abstract contract ERC7401D is
      * @return A boolean value signifying whether the *operator* is allowed to manage the tokens of the *owner* (`true`)
      *  or not (`false`)
      */
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) public view virtual returns (bool) {
+    function isApprovedForAll(address owner, address operator) public view virtual returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
@@ -757,15 +644,8 @@ abstract contract ERC7401D is
      * @param destinationId ID of the token to receive the given token
      * @param to Address of account to receive the token
      */
-    function _updateOwnerAndClearApprovals(
-        uint256 tokenId,
-        uint256 destinationId,
-        address to
-    ) internal {
-        _directOwners[tokenId] = DirectOwner({
-            ownerAddress: to,
-            tokenId: destinationId
-        });
+    function _updateOwnerAndClearApprovals(uint256 tokenId, uint256 destinationId, address to) internal {
+        _directOwners[tokenId] = DirectOwner({ownerAddress: to, tokenId: destinationId});
 
         // Clear approvals from the previous owner
         _approve(address(0), tokenId);
@@ -791,14 +671,9 @@ abstract contract ERC7401D is
      * @param tokenId ID of the token being checked
      * @return A boolean value indicating whether the `spender` is approved to manage the given token
      */
-    function _isApprovedOrOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
         address owner = ownerOf(tokenId);
-        return (spender == owner ||
-            isApprovedForAll(owner, spender) ||
-            getApproved(tokenId) == spender);
+        return (spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender);
     }
 
     /**
@@ -808,19 +683,14 @@ abstract contract ERC7401D is
      * @return A boolean value indicating whether the `spender` is approved to manage the given token or its
      *  direct owner
      */
-    function _isApprovedOrDirectOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
-        (address owner, uint256 parentId, ) = directOwnerOf(tokenId);
+    function _isApprovedOrDirectOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
+        (address owner, uint256 parentId,) = directOwnerOf(tokenId);
         // When the parent is an NFT, only it can do operations
         if (parentId != 0) {
             return (spender == owner);
         }
         // Otherwise, the owner or approved address can
-        return (spender == owner ||
-            isApprovedForAll(owner, spender) ||
-            getApproved(tokenId) == spender);
+        return (spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender);
     }
 
     /**
@@ -854,21 +724,12 @@ abstract contract ERC7401D is
      * @param data Optional data to send along with the call
      * @return valid Boolean value signifying whether the call correctly returned the expected magic value
      */
-    function _checkOnERC721Received(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) private returns (bool) {
+    function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory data)
+        private
+        returns (bool)
+    {
         if (to.code.length != 0) {
-            try
-                IERC721Receiver(to).onERC721Received(
-                    _msgSender(),
-                    from,
-                    tokenId,
-                    data
-                )
-            returns (bytes4 retval) {
+            try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, data) returns (bytes4 retval) {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == uint256(0)) {
@@ -892,11 +753,7 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function addChild(
-        uint256 parentId,
-        uint256 childId,
-        bytes memory data
-    ) public virtual {
+    function addChild(uint256 parentId, uint256 childId, bytes memory data) public virtual {
         _requireMinted(parentId);
 
         address msgSender = _msgSender();
@@ -911,12 +768,7 @@ abstract contract ERC7401D is
 
         childrenRef.push(childId);
 
-        emit ChildAccepted(
-            parentId,
-            childrenRef.length - 1,
-            msgSender,
-            childId
-        );
+        emit ChildAccepted(parentId, childrenRef.length - 1, msgSender, childId);
 
         _afterAddChild(parentId, msgSender, childId, data);
     }
@@ -948,15 +800,7 @@ abstract contract ERC7401D is
         bool,
         bytes memory data
     ) public virtual onlyApprovedOrOwner(tokenId) {
-        _transferChild(
-            tokenId,
-            to,
-            destinationId,
-            childIndex,
-            childAddress,
-            childId,
-            data
-        );
+        _transferChild(tokenId, to, destinationId, childIndex, childAddress, childId, data);
     }
 
     /**
@@ -993,32 +837,14 @@ abstract contract ERC7401D is
 
         if (to != address(0)) {
             if (destinationId == uint256(0)) {
-                IERC721(childAddress).safeTransferFrom(
-                    address(this),
-                    to,
-                    childId,
-                    data
-                );
+                IERC721(childAddress).safeTransferFrom(address(this), to, childId, data);
             } else {
                 // Destination is an NFT
-                IERC7401(childAddress).nestTransferFrom(
-                    address(this),
-                    to,
-                    childId,
-                    destinationId,
-                    data
-                );
+                IERC7401(childAddress).nestTransferFrom(address(this), to, childId, destinationId, data);
             }
         }
 
-        emit ChildTransferred(
-            tokenId,
-            childIndex,
-            childAddress,
-            childId,
-            false,
-            to == address(0)
-        );
+        emit ChildTransferred(tokenId, childIndex, childAddress, childId, false, to == address(0));
 
         _afterTransferChild(tokenId, childIndex, childAddress, childId, data);
     }
@@ -1036,12 +862,10 @@ abstract contract ERC7401D is
      * @param childIndex Index of the child token in the parent token's children array
      * @param expectedChildId The expected ID of the child token
      */
-    function _checkExpectedChildId(
-        uint256 tokenId,
-        address childAddress,
-        uint256 childIndex,
-        uint256 expectedChildId
-    ) private view {
+    function _checkExpectedChildId(uint256 tokenId, address childAddress, uint256 childIndex, uint256 expectedChildId)
+        private
+        view
+    {
         uint256 childIdByIndex = childOf(tokenId, childAddress, childIndex);
         if (childIdByIndex != expectedChildId) {
             revert ERC7401UnexpectedChildId();
@@ -1055,9 +879,7 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function childrenOf(
-        uint256 parentId
-    ) public view virtual returns (Child[] memory children) {
+    function childrenOf(uint256 parentId) public view virtual returns (Child[] memory children) {
         address[] memory localChildAddresses = _childAddresses.values();
         uint256 childAddressesLength = localChildAddresses.length;
 
@@ -1077,10 +899,7 @@ abstract contract ERC7401D is
             uint256 childIdsLength = childIds.length;
 
             for (uint256 j; j < childIdsLength; j++) {
-                children[totalChildrenIndex] = Child({
-                    tokenId: childIds[j],
-                    contractAddress: childAddress
-                });
+                children[totalChildrenIndex] = Child({tokenId: childIds[j], contractAddress: childAddress});
 
                 unchecked {
                     ++totalChildrenIndex;
@@ -1092,29 +911,21 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401D
      */
-    function childrenOf(
-        uint256 parentId,
-        address childAddress
-    ) public view virtual returns (uint256[] memory) {
+    function childrenOf(uint256 parentId, address childAddress) public view virtual returns (uint256[] memory) {
         return _children[parentId][childAddress];
     }
 
     /**
      * @inheritdoc IERC7401
      */
-    function pendingChildrenOf(
-        uint256
-    ) public view virtual returns (Child[] memory) {
+    function pendingChildrenOf(uint256) public view virtual returns (Child[] memory) {
         revert ERC7401DFunctionNotSupported();
     }
 
     /**
      * @inheritdoc IERC7401
      */
-    function childOf(
-        uint256 parentId,
-        uint256 index
-    ) public view virtual returns (Child memory) {
+    function childOf(uint256 parentId, uint256 index) public view virtual returns (Child memory) {
         address[] memory localChildAddresses = _childAddresses.values();
         uint256 childAddressesLength = localChildAddresses.length;
         uint256 totalChildrenIndex;
@@ -1125,11 +936,7 @@ abstract contract ERC7401D is
             uint256 childrenLength = children.length;
 
             if (totalChildrenIndex + childrenLength > index) {
-                return
-                    Child({
-                        tokenId: children[index - totalChildrenIndex],
-                        contractAddress: childAddress
-                    });
+                return Child({tokenId: children[index - totalChildrenIndex], contractAddress: childAddress});
             }
 
             totalChildrenIndex += childrenLength;
@@ -1141,13 +948,10 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401D
      */
-    function childOf(
-        uint256 parentId,
-        address childAddress,
-        uint256 index
-    ) public view virtual returns (uint256) {
-        if (childrenOf(parentId, childAddress).length <= index)
+    function childOf(uint256 parentId, address childAddress, uint256 index) public view virtual returns (uint256) {
+        if (childrenOf(parentId, childAddress).length <= index) {
             revert ERC7401ChildIndexOutOfRange();
+        }
 
         return _children[parentId][childAddress][index];
     }
@@ -1155,10 +959,7 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401
      */
-    function pendingChildOf(
-        uint256,
-        uint256
-    ) public view virtual returns (Child memory) {
+    function pendingChildOf(uint256, uint256) public view virtual returns (Child memory) {
         revert ERC7401DFunctionNotSupported();
     }
 
@@ -1182,12 +983,13 @@ abstract contract ERC7401D is
      */
     function _addChildAddress(address childAddress) internal virtual {
         if (childAddress.code.length == 0) revert ERC7401IsNotContract();
-        if (
-            !IERC165(childAddress).supportsInterface(type(IERC7401).interfaceId)
-        ) revert ERC7401IsNotAnERC7401Contract();
+        if (!IERC165(childAddress).supportsInterface(type(IERC7401).interfaceId)) {
+            revert ERC7401IsNotAnERC7401Contract();
+        }
 
-        if (!_childAddresses.add(childAddress))
+        if (!_childAddresses.add(childAddress)) {
             revert ERC7401DChildAddressAlreadyExists(childAddress);
+        }
 
         emit ChildAddressAdded(childAddress);
     }
@@ -1197,8 +999,9 @@ abstract contract ERC7401D is
      * @param childAddress Address of the child contract to remove
      */
     function _removeChildAddress(address childAddress) internal virtual {
-        if (!_childAddresses.remove(childAddress))
+        if (!_childAddresses.remove(childAddress)) {
             revert ERC7401DChildAddressNotFound(childAddress);
+        }
 
         emit ChildAddressRemoved(childAddress);
     }
@@ -1210,14 +1013,13 @@ abstract contract ERC7401D is
      */
     function _addParentAddress(address parentAddress) internal virtual {
         if (parentAddress.code.length == 0) revert ERC7401IsNotContract();
-        if (
-            !IERC165(parentAddress).supportsInterface(
-                type(IERC7401).interfaceId
-            )
-        ) revert ERC7401IsNotAnERC7401Contract();
+        if (!IERC165(parentAddress).supportsInterface(type(IERC7401).interfaceId)) {
+            revert ERC7401IsNotAnERC7401Contract();
+        }
 
-        if (!_parentAddresses.add(parentAddress))
+        if (!_parentAddresses.add(parentAddress)) {
             revert ERC7401DParentAddressAlreadyExists(parentAddress);
+        }
 
         emit ParentAddressAdded(parentAddress);
     }
@@ -1227,8 +1029,9 @@ abstract contract ERC7401D is
      * @param parentAddress Address of the parent contract to remove
      */
     function _removeParentAddress(address parentAddress) internal virtual {
-        if (!_parentAddresses.remove(parentAddress))
+        if (!_parentAddresses.remove(parentAddress)) {
             revert ERC7401DParentAddressNotFound(parentAddress);
+        }
 
         emit ParentAddressRemoved(parentAddress);
     }
@@ -1236,18 +1039,14 @@ abstract contract ERC7401D is
     /**
      * @inheritdoc IERC7401D
      */
-    function isChildAddress(
-        address childAddress
-    ) public view virtual returns (bool) {
+    function isChildAddress(address childAddress) public view virtual returns (bool) {
         return _childAddresses.contains(childAddress);
     }
 
     /**
      * @inheritdoc IERC7401D
      */
-    function isParentAddress(
-        address parentAddress
-    ) public view virtual returns (bool) {
+    function isParentAddress(address parentAddress) public view virtual returns (bool) {
         return _parentAddresses.contains(parentAddress);
     }
 
@@ -1281,11 +1080,7 @@ abstract contract ERC7401D is
      * @param to Address to which the token is being transferred
      * @param tokenId ID of the token being transferred
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {}
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual {}
 
     /**
      * @notice Hook that is called after any transfer of tokens. This includes minting and burning.
@@ -1299,11 +1094,7 @@ abstract contract ERC7401D is
      * @param to Address to which the token has been transferred
      * @param tokenId ID of the token that has been transferred
      */
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {}
+    function _afterTokenTransfer(address from, address to, uint256 tokenId) internal virtual {}
 
     /**
      * @notice Hook that is called before nested token transfer.
@@ -1358,12 +1149,10 @@ abstract contract ERC7401D is
      *  pending children array
      * @param data Additional data with no specified format
      */
-    function _beforeAddChild(
-        uint256 tokenId,
-        address childAddress,
-        uint256 childId,
-        bytes memory data
-    ) internal virtual {}
+    function _beforeAddChild(uint256 tokenId, address childAddress, uint256 childId, bytes memory data)
+        internal
+        virtual
+    {}
 
     /**
      * @notice Hook that is called after a child is added to the pending tokens array of a given token.
@@ -1380,12 +1169,10 @@ abstract contract ERC7401D is
      *  pending children array
      * @param data Additional data with no specified format
      */
-    function _afterAddChild(
-        uint256 tokenId,
-        address childAddress,
-        uint256 childId,
-        bytes memory data
-    ) internal virtual {}
+    function _afterAddChild(uint256 tokenId, address childAddress, uint256 childId, bytes memory data)
+        internal
+        virtual
+    {}
 
     /**
      * @notice Hook that is called before a child is transferred from a given child token array of a given token.
@@ -1454,16 +1241,11 @@ abstract contract ERC7401D is
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string.concat(baseURI, tokenId.toString())
-                : "";
+        return bytes(baseURI).length > 0 ? string.concat(baseURI, tokenId.toString()) : "";
     }
 
     /**
@@ -1483,10 +1265,7 @@ abstract contract ERC7401D is
      * @param array An array of uint256 values
      * @param index An index of the uint256 value to remove in the accompanying array
      */
-    function _removeUint256ByIndex(
-        uint256[] storage array,
-        uint256 index
-    ) private {
+    function _removeUint256ByIndex(uint256[] storage array, uint256 index) private {
         array[index] = array[array.length - 1];
         array.pop();
     }

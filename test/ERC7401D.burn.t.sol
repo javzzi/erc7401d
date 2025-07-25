@@ -71,9 +71,7 @@ contract BurnTest is ERC7401DTestBase {
         assertEq(erc7401dParent.childrenOf(tokenId).length, 0);
     }
 
-    function test_ShouldBurnChildrenOfTheTokenInTheirRespectiveContracts()
-        public
-    {
+    function test_ShouldBurnChildrenOfTheTokenInTheirRespectiveContracts() public {
         erc7401dParent.addChildAddress(address(erc7401dChild1));
         erc7401dChild1.addParentAddress(address(erc7401dParent));
 
@@ -92,17 +90,13 @@ contract BurnTest is ERC7401DTestBase {
         erc7401dParent.burn(999);
     }
 
-    function test_RevertWhen_BurningFromAnAddressThatIsNotTheOwnerOrApprovedOfTheToken()
-        public
-    {
+    function test_RevertWhen_BurningFromAnAddressThatIsNotTheOwnerOrApprovedOfTheToken() public {
         vm.prank(other);
         vm.expectRevert(ERC7401NotApprovedOrDirectOwner.selector);
         erc7401dParent.burn(tokenId);
     }
 
-    function test_RevertWhen_BurningATokenWithChildrenAndNoMaxChildrenBurnsWasSpecified()
-        public
-    {
+    function test_RevertWhen_BurningATokenWithChildrenAndNoMaxChildrenBurnsWasSpecified() public {
         erc7401dParent.addChildAddress(address(erc7401dChild1));
         erc7401dChild1.addParentAddress(address(erc7401dParent));
 
@@ -110,13 +104,7 @@ contract BurnTest is ERC7401DTestBase {
         erc7401dChild1.nestMint(address(erc7401dParent), 1, 1, "");
 
         vm.prank(owner);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ERC7401MaxRecursiveBurnsReached.selector,
-                address(erc7401dChild1),
-                1
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(ERC7401MaxRecursiveBurnsReached.selector, address(erc7401dChild1), 1));
         erc7401dParent.burn(tokenId, 0);
     }
 
@@ -132,13 +120,7 @@ contract BurnTest is ERC7401DTestBase {
         erc7401dChild2.nestMint(address(erc7401dChild1), 1, 1, "");
 
         vm.prank(owner);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ERC7401MaxRecursiveBurnsReached.selector,
-                address(erc7401dChild2),
-                1
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(ERC7401MaxRecursiveBurnsReached.selector, address(erc7401dChild2), 1));
         erc7401dParent.burn(tokenId, 1);
     }
 }

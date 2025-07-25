@@ -4,10 +4,7 @@ pragma solidity ^0.8.26;
 import {ERC7401D} from "../ERC7401D.sol";
 
 contract ERC7401DMock is ERC7401D {
-    constructor(
-        string memory name,
-        string memory symbol
-    ) ERC7401D(name, symbol) {}
+    constructor(string memory name, string memory symbol) ERC7401D(name, symbol) {}
 
     function addChildAddress(address childAddress) public {
         _addChildAddress(childAddress);
@@ -29,12 +26,7 @@ contract ERC7401DMock is ERC7401D {
         _safeMint(to, tokenId, data);
     }
 
-    function nestMint(
-        address to,
-        uint256 tokenId,
-        uint256 destinationId,
-        bytes memory data
-    ) public {
+    function nestMint(address to, uint256 tokenId, uint256 destinationId, bytes memory data) public {
         _nestMint(to, tokenId, destinationId, data);
     }
 

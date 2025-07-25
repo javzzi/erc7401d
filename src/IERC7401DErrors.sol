@@ -82,10 +82,7 @@ interface IERC7401DErrors {
      * @param childContract Address of the collection smart contract in which the maximum number of recursive burns was reached.
      * @param childId ID of the child token at which the maximum number of recursive burns was reached.
      */
-    error ERC7401MaxRecursiveBurnsReached(
-        address childContract,
-        uint256 childId
-    );
+    error ERC7401MaxRecursiveBurnsReached(address childContract, uint256 childId);
 
     /**
      * @dev Attempting to nest a child over the nestable limit (current limit is 100 levels of nesting).

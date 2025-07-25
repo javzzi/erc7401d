@@ -17,10 +17,7 @@ contract BalanceTest is ERC7401DTestBase {
         assertEq(erc7401dParent.balanceOf(owner), 1);
     }
 
-    function testFuzz_BalanceAfterMints(
-        address to,
-        uint256 numMintsSeed
-    ) public {
+    function testFuzz_BalanceAfterMints(address to, uint256 numMintsSeed) public {
         vm.assume(to != address(0));
         vm.assume(to.code.length == 0);
         uint256 numMints = bound(numMintsSeed, 1, 20);
@@ -34,11 +31,7 @@ contract BalanceTest is ERC7401DTestBase {
         assertEq(erc7401dParent.balanceOf(to), numMints);
     }
 
-    function testFuzz_BalanceAfterTransfers(
-        address from,
-        address to,
-        uint256 numTransfersSeed
-    ) public {
+    function testFuzz_BalanceAfterTransfers(address from, address to, uint256 numTransfersSeed) public {
         vm.assume(from != address(0) && to != address(0));
         vm.assume(from != to);
         vm.assume(from.code.length == 0 && to.code.length == 0);
@@ -59,10 +52,7 @@ contract BalanceTest is ERC7401DTestBase {
             erc7401dParent.transferFrom(from, to, tokenIds[i]);
         }
 
-        assertEq(
-            erc7401dParent.balanceOf(from),
-            fromBalanceBefore - numTransfers
-        );
+        assertEq(erc7401dParent.balanceOf(from), fromBalanceBefore - numTransfers);
         assertEq(erc7401dParent.balanceOf(to), toBalanceBefore + numTransfers);
     }
 
@@ -130,8 +120,7 @@ contract BalanceTest is ERC7401DTestBase {
         uint256 addr1BalanceAfterBurns = erc7401dParent.balanceOf(addr1);
         assertEq(addr1BalanceAfterBurns, numMints - numTransfers - numBurns);
 
-        uint256 totalBalanceAfter = addr1BalanceAfterBurns +
-            addr2BalanceAfterTransfers;
+        uint256 totalBalanceAfter = addr1BalanceAfterBurns + addr2BalanceAfterTransfers;
         uint256 expectedTotalBalance = numMints - numBurns;
         assertEq(totalBalanceAfter, expectedTotalBalance);
     }
@@ -144,14 +133,8 @@ contract BalanceTest is ERC7401DTestBase {
         uint256 mint2Seed,
         uint256 mint3Seed
     ) public {
-        vm.assume(
-            addr1 != address(0) && addr2 != address(0) && addr3 != address(0)
-        );
-        vm.assume(
-            addr1.code.length == 0 &&
-                addr2.code.length == 0 &&
-                addr3.code.length == 0
-        );
+        vm.assume(addr1 != address(0) && addr2 != address(0) && addr3 != address(0));
+        vm.assume(addr1.code.length == 0 && addr2.code.length == 0 && addr3.code.length == 0);
         vm.assume(addr1 != addr2 && addr2 != addr3 && addr1 != addr3);
 
         uint256 mint1Count = bound(mint1Seed, 0, 5);
@@ -185,10 +168,7 @@ contract BalanceTest is ERC7401DTestBase {
         assertGe(sumOfBalances, totalMints);
     }
 
-    function testFuzz_BalanceWithNestedTokens(
-        address owner_,
-        uint256 nestedMintsSeed
-    ) public {
+    function testFuzz_BalanceWithNestedTokens(address owner_, uint256 nestedMintsSeed) public {
         vm.assume(owner_ != address(0));
         vm.assume(owner_.code.length == 0);
         uint256 numNestedMints = bound(nestedMintsSeed, 1, 5);
@@ -200,30 +180,18 @@ contract BalanceTest is ERC7401DTestBase {
         vm.assume(!erc7401dParent.exists(parentTokenId));
         erc7401dParent.safeMint(owner_, parentTokenId, "");
 
-        uint256 parentContractBalanceBefore = erc7401dChild1.balanceOf(
-            address(erc7401dParent)
-        );
+        uint256 parentContractBalanceBefore = erc7401dChild1.balanceOf(address(erc7401dParent));
 
         for (uint256 i = 0; i < numNestedMints; i++) {
             uint256 childTokenId = 2000 + i;
             vm.assume(!erc7401dChild1.exists(childTokenId));
 
             vm.prank(owner_);
-            erc7401dChild1.nestMint(
-                address(erc7401dParent),
-                childTokenId,
-                parentTokenId,
-                ""
-            );
+            erc7401dChild1.nestMint(address(erc7401dParent), childTokenId, parentTokenId, "");
         }
 
-        uint256 parentContractBalanceAfter = erc7401dChild1.balanceOf(
-            address(erc7401dParent)
-        );
-        assertEq(
-            parentContractBalanceAfter,
-            parentContractBalanceBefore + numNestedMints
-        );
+        uint256 parentContractBalanceAfter = erc7401dChild1.balanceOf(address(erc7401dParent));
+        assertEq(parentContractBalanceAfter, parentContractBalanceBefore + numNestedMints);
 
         for (uint256 i = 0; i < numNestedMints; i++) {
             uint256 childTokenId = 2000 + i;
@@ -267,8 +235,7 @@ contract BalanceTest is ERC7401DTestBase {
             }
 
             address regularOwner = erc7401dParent.ownerOf(tokenId);
-            (address directOwner, uint256 parentTokenId, ) = erc7401dParent
-                .directOwnerOf(tokenId);
+            (address directOwner, uint256 parentTokenId,) = erc7401dParent.directOwnerOf(tokenId);
 
             if (parentTokenId == 0) {
                 assertEq(directOwner, regularOwner);
@@ -278,11 +245,7 @@ contract BalanceTest is ERC7401DTestBase {
         }
     }
 
-    function _updateGhostState(
-        address owner_,
-        uint256 tokenId_,
-        bool exists
-    ) internal {
+    function _updateGhostState(address owner_, uint256 tokenId_, bool exists) internal {
         ghost_tokenExists[tokenId_] = exists;
 
         if (exists) {
@@ -323,11 +286,7 @@ contract BalanceTest is ERC7401DTestBase {
         _updateGhostState(tokenOwner, tokenId_, false);
     }
 
-    function helper_transfer(
-        address from,
-        address to,
-        uint256 tokenId_
-    ) public {
+    function helper_transfer(address from, address to, uint256 tokenId_) public {
         vm.assume(from != address(0) && to != address(0));
         vm.assume(from != to);
         vm.assume(from.code.length == 0 && to.code.length == 0);
