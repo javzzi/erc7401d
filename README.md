@@ -1,4 +1,4 @@
-# ERC-7401D: Nestable NFTs for Curated Ecosystems
+# ERC-7401D: Nestable NFTs for Trusted Ecosystems
 
 [![Foundry][foundry-badge]][foundry]
 [![License: Apache-2.0][license-badge]][license]
@@ -8,7 +8,7 @@
 [license]: https://opensource.org/licenses/Apache-2.0
 [license-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
 
-**ERC-7401D** is a simplified implementation of the [ERC-7401](https://eips.ethereum.org/EIPS/eip-7401) standard for nestable Non-Fungible Tokens (NFTs), designed for whitelist-based ecosystems. This implementation focuses on user experience by reducing the number of transactions needed to manage nested NFTs and on security by creating a controlled environment where only trusted collections can interact.
+**ERC-7401D** is a simplified implementation of the [ERC-7401](https://eips.ethereum.org/EIPS/eip-7401) standard for nestable Non-Fungible Tokens (NFTs), designed for trusted ecosystems. This implementation focuses on user experience by reducing the number of transactions needed to manage nested NFTs and on security by creating a controlled environment where only trusted collections can interact.
 
 This implementation is used by the Doodles Avatar and Doodles Wearable contracts.
 
