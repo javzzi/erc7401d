@@ -13,9 +13,21 @@ import {IERC7401} from "./IERC7401.sol";
 import {IERC7401D} from "./IERC7401D.sol";
 import {IERC7401DErrors} from "./IERC7401DErrors.sol";
 
-/// @notice ERC7401D implementation
-/// @author Javzzi with Doodles
-/// @author Modified from RMRKNestable by RMRK team (https://github.com/rmrk-team/evm/blob/master/contracts/RMRK/nestable/RMRKNestable.sol)
+/**
+ * @title ERC7401D
+ *
+ * @dev Custom implementation of [ERC-7401](https://eips.ethereum.org/EIPS/eip-7401) for whitelist-based nestable NFTs.
+ * This contract implements a custom version with the following differences:
+ *      - Contract whitelisting: Only registered parent/child contracts can interact.
+ *      - Direct nesting: Removes the propose-commit pattern for simplified user experience.
+ *      - No pending children: All accepted children are immediately active.
+ *
+ * As a result, functions related to the propose-commit pattern and pending children
+ * (`acceptChild`, `rejectAllChildren`, `pendingChildrenOf`, and `pendingChildOf`) are not supported.
+ *
+ * @author Javzzi with Doodles
+ * @author Modified from RMRKNestable by RMRK team (https://github.com/rmrk-team/evm/blob/master/contracts/RMRK/nestable/RMRKNestable.sol)
+ */
 abstract contract ERC7401D is Context, IERC165, IERC721, IERC721Metadata, IERC7401D, IERC7401DErrors {
     using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -774,14 +786,16 @@ abstract contract ERC7401D is Context, IERC165, IERC721, IERC721Metadata, IERC74
     }
 
     /**
-     * @inheritdoc IERC7401
+     * @dev This function is not supported. ERC-7401D uses a direct nesting model and does not have a pending state
+     * for children. Use {addChild} to directly nest a token.
      */
     function acceptChild(uint256, uint256, address, uint256) public virtual {
         revert ERC7401DFunctionNotSupported();
     }
 
     /**
-     * @inheritdoc IERC7401
+     * @dev This function is not supported. ERC-7401D uses a direct nesting model and does not have a pending state
+     * for children.
      */
     function rejectAllChildren(uint256, uint256) public virtual {
         revert ERC7401DFunctionNotSupported();
@@ -916,7 +930,7 @@ abstract contract ERC7401D is Context, IERC165, IERC721, IERC721Metadata, IERC74
     }
 
     /**
-     * @inheritdoc IERC7401
+     * @dev This function is not supported because ERC-7401D does not have a pending state for children.
      */
     function pendingChildrenOf(uint256) public view virtual returns (Child[] memory) {
         revert ERC7401DFunctionNotSupported();
@@ -957,7 +971,7 @@ abstract contract ERC7401D is Context, IERC165, IERC721, IERC721Metadata, IERC74
     }
 
     /**
-     * @inheritdoc IERC7401
+     * @dev This function is not supported because ERC-7401D does not have a pending state for children.
      */
     function pendingChildOf(uint256, uint256) public view virtual returns (Child memory) {
         revert ERC7401DFunctionNotSupported();
